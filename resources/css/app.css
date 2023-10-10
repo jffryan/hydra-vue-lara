@@ -25,6 +25,10 @@ p {
   @apply mb-4;
 }
 
+a {
+  @apply hover:underline;
+}
+
 /* Buttons */
 
 .btn {
@@ -32,11 +36,15 @@ p {
 }
 
 .btn-primary {
-  @apply text-white bg-slate-900 hover:bg-slate-700 focus:outline-none focus:border-zinc-600 focus:rounded-md;
+  @apply text-white bg-hydra-green-500 hover:bg-hydra-green-700 focus:outline-none focus:border-zinc-600 focus:rounded-md;
 }
 
 .btn-secondary {
   @apply border border-slate-700 hover:bg-slate-700 hover:text-white;
+}
+
+.btn-tertiary {
+  @apply bg-hydra-amber-700 hover:bg-hydra-amber-600;
 }
 
 .btn-danger {

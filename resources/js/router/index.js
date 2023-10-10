@@ -16,7 +16,22 @@ const router = createRouter({
     {
       path: "/projects",
       name: "projects.index",
-      component: () => import("@/views/ProjectsView.vue"),
+      component: () => import("@/views/projects/ProjectsIndex.vue"),
+    },
+    {
+      path: "/projects/:id",
+      name: "projects.show",
+      component: () => import("@/views/projects/ProjectsShow.vue"),
+    },
+    {
+      path: "/projects/new",
+      name: "projects.create",
+      component: () => import("@/views/projects/ProjectsCreate.vue"),
+    },
+    {
+      path: "/tasklists/:id",
+      name: "tasklists.show",
+      component: () => import("@/views/tasklists/TasklistsShow.vue"),
     },
   ],
 });

@@ -17,7 +17,7 @@
             >
               <!-- Dropdown Trigger -->
               <button class="inline-flex items-center">
-                Dropdown
+                Apps
                 <svg
                   class="w-2.5 h-2.5 ml-2.5"
                   aria-hidden="true"
@@ -40,23 +40,26 @@
                 class="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-hydra-cinder-600 ring-1 ring-black ring-opacity-5 focus:outline-none z-10"
               >
                 <div class="py-1" role="menu" aria-orientation="vertical">
-                  <router-link
-                    to="/"
+                  <a
+                    href="http://127.0.0.1:5000/"
+                    target="_blank"
                     class="block px-4 py-2 text-sm hover:text-gray-700 hover:bg-gray-100"
                     role="menuitem"
-                    >Pergamum</router-link
+                    >Pergamum</a
                   >
-                  <router-link
-                    to="/option2"
+                  <a
+                    href="http://127.0.0.1:8080/"
+                    target="_blank"
                     class="block px-4 py-2 text-sm hover:text-gray-700 hover:bg-gray-100"
                     role="menuitem"
-                    >Iago</router-link
+                    >Iago</a
                   >
-                  <router-link
-                    to="/option3"
+                  <a
+                    href="http://127.0.0.1:8000/"
+                    target="_blank"
                     class="block px-4 py-2 text-sm hover:text-gray-700 hover:bg-gray-100"
                     role="menuitem"
-                    >Hydra</router-link
+                    >Hydra</a
                   >
                 </div>
               </div>

@@ -3,7 +3,7 @@
     <HeaderNav />
     <div>
       <SidebarNav
-        class="fixed z-20 inset-0 top-16 left-[max(0px,calc(50%-45rem))] right-auto w-[20rem] py-6 px-8 overflow-y-auto"
+        class="fixed z-20 inset-0 top-[4.7rem] left-[max(0px,calc(50%-45rem))] right-auto w-[20rem] py-6 px-8 overflow-y-auto"
       />
       <RouterView class="py-6 pl-[20rem] w-full" />
     </div>
@@ -22,16 +22,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.body-grid {
-  display: grid;
-  grid-template-columns: 1fr 5fr;
-  min-height: 100vh;
-}
-
-.body-container {
-  max-width: 1440px;
-  margin: 0 auto;
-}
-</style>

@@ -1,11 +1,11 @@
 <template>
   <main>
-    <h1>Projects</h1>
+    <h1>Tasklist Index</h1>
   </main>
 </template>
 
 <script>
 export default {
-  name: "ProjectsView",
+  name: "TasklistsIndex",
 };
 </script>
