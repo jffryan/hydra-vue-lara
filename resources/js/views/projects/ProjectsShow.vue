@@ -6,15 +6,20 @@
     <!-- End skeleton loader -->
     <div v-else-if="currentProject">
       <h1>{{ currentProject.name }}</h1>
-      <div class="flex">
+      <div class="flex gap-x-10">
         <div class="w-2/3">
           <div v-if="currentProject.tasklists.length > 0">
-            <p
+            <router-link
               v-for="tasklist in currentProject.tasklists"
               :key="tasklist.tasklist_id"
+              :to="{
+                name: 'tasklists.show',
+                params: { id: tasklist.tasklist_id },
+              }"
+              class="block mb-4 p-4 bg-hydra-cinder-400 rounded"
             >
               {{ tasklist.name }}
-            </p>
+            </router-link>
           </div>
         </div>
         <div class="w-1/3">

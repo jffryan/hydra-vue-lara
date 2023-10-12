@@ -4,7 +4,7 @@ import { getAllProjects, getOneProject } from "@/api/ProjectController";
 const useProjectsStore = defineStore("ProjectsStore", {
   state: () => ({
     allProjects: [],
-    currentProject: {},
+    currentProject: null,
   }),
   actions: {
     async fetchAllProjects() {

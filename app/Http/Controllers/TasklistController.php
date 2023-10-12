@@ -53,7 +53,7 @@ class TasklistController extends Controller
      */
     public function show($id)
     {
-        $tasklist = Tasklist::with("tasks", "tasks.status", "tasks.subtasks")->where("task_list_id", $id)->first();
+        $tasklist = Tasklist::with("tasks", "tasks.status", "tasks.subtasks", "project")->where("tasklist_id", $id)->first();
 
         if (!$tasklist) {
             return response()->json(['error' => 'Tasklist not found'], 404);

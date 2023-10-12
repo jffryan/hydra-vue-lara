@@ -12,7 +12,7 @@ class Task extends Model
     use HasFactory;
 
     protected $primaryKey = "task_id";
-    protected $fillable = ["title", "status_id", "is_priority", "description", "tasklist_id"];
+    protected $fillable = ["name", "status_id", "is_priority", "description", "tasklist_id"];
 
     public function status(): BelongsTo
     {

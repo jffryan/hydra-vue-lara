@@ -33,6 +33,11 @@ const router = createRouter({
       name: "tasklists.show",
       component: () => import("@/views/tasklists/TasklistsShow.vue"),
     },
+    {
+      path: "/tasks/:id",
+      name: "tasks.show",
+      component: () => import("@/views/tasks/TasksShow.vue"),
+    },
   ],
 });
 
