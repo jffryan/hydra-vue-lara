@@ -83,10 +83,13 @@ class TasklistController extends Controller
     public function update(Request $request, $id)
     {
         $existing_tasklist = Tasklist::findOrFail($id);
-
-        $existing_tasklist->fill($request->only("name"));
-        $existing_tasklist->save();
-
+    
+        $attributes = $request->input('tasklist');
+    
+        $existing_tasklist->update($attributes);
+    
+        $existing_tasklist->refresh()->load("tasks", "tasks.status", "tasks.subtasks", "project");
+    
         return response()->json($existing_tasklist, 200);
     }
 

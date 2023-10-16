@@ -18,33 +18,47 @@
       <div class="flex gap-x-10">
         <div class="w-2/3">
           <div v-if="currentTasklist?.tasks.length > 0">
-            <router-link
-              v-for="task in currentTasklist.tasks"
-              :key="task.task_id"
-              :to="{
-                name: 'tasks.show',
-                params: { id: task.task_id },
-              }"
-              class="block mb-4 p-4 bg-hydra-cinder-400 rounded"
-            >
-              {{ task.name }}
-            </router-link>
+            <IndexTable
+              title="Pinned"
+              :tableData="pinnedTasks"
+              dataType="task"
+              class="mb-12"
+            />
+            <IndexTable
+              title="Other"
+              :tableData="otherTasks"
+              dataType="task"
+              class="mb-12"
+            />
+            <IndexTable
+              v-if="completedTasks.length > 0"
+              title="Completed"
+              :tableData="completedTasks"
+              dataType="task"
+            />
           </div>
         </div>
         <div class="w-1/3">
           <div class="mb-6 flex justify-end">
-            <button v-if="!isAddingTask" class="btn btn-primary mr-4">
-              Edit
-            </button>
             <button
               @click="toggleAddTask"
               :class="[
-                'btn',
-                isAddingTask ? ' bg-hydra-cinder-800 ' : 'btn-tertiary',
+                'btn mr-4',
+                isAddingTask ? ' bg-hydra-cinder-800 ' : 'btn-primary ',
               ]"
             >
               {{ isAddingTask ? "Cancel" : "Add Task" }}
             </button>
+            <router-link
+              v-if="!isAddingTask"
+              :to="{
+                name: 'tasklists.edit',
+                params: { id: currentTasklist.tasklist_id },
+              }"
+              class="btn btn-tertiary"
+            >
+              Edit
+            </router-link>
           </div>
           <BlankTask v-if="isAddingTask" class="bg-hydra-cinder-400" />
         </div>
@@ -57,11 +71,13 @@
 import { useProjectsStore, useTasklistsStore } from "@/stores";
 
 import BlankTask from "@/components/tasks/BlankTask.vue";
+import IndexTable from "@/components/tables/IndexTable.vue";
 
 export default {
   name: "TasklistsShow",
   components: {
     BlankTask,
+    IndexTable,
   },
   setup() {
     const ProjectsStore = useProjectsStore();
@@ -83,6 +99,35 @@ export default {
     },
     currentTasklist() {
       return this.TasklistsStore.currentTasklist;
+    },
+    tasklistTasks() {
+      return this.currentTasklist.tasks;
+    },
+    partitionedTasks() {
+      const pinned = [];
+      const others = [];
+      const completed = [];
+
+      this.tasklistTasks.forEach((task) => {
+        if (task.status_id === 3) {
+          completed.push(task);
+        } else if (task.is_priority || task.status_id === 2) {
+          pinned.push(task);
+        } else {
+          others.push(task);
+        }
+      });
+
+      return { pinned, others, completed };
+    },
+    pinnedTasks() {
+      return this.partitionedTasks.pinned;
+    },
+    otherTasks() {
+      return this.partitionedTasks.others;
+    },
+    completedTasks() {
+      return this.partitionedTasks.completed;
     },
   },
   methods: {

@@ -3,13 +3,17 @@
     <h1>Projects</h1>
     <div class="flex">
       <div class="w-2/3">
-        <div v-for="project in projectsList" :key="project.project_id">
-          <router-link
-            :to="{ name: 'projects.show', params: { id: project.project_id } }"
-          >
-            {{ project.name }}
-          </router-link>
-        </div>
+        <IndexTable
+          title="Pinned"
+          :tableData="pinnedProjects"
+          dataType="project"
+          class="mb-12"
+        />
+        <IndexTable
+          title="Other"
+          :tableData="otherProjects"
+          dataType="project"
+        />
       </div>
       <div class="w-1/3"></div>
     </div>
@@ -19,8 +23,13 @@
 <script>
 import { useProjectsStore } from "@/stores";
 
+import IndexTable from "@/components/tables/IndexTable.vue";
+
 export default {
   name: "ProjectsIndex",
+  components: {
+    IndexTable,
+  },
   setup() {
     const ProjectsStore = useProjectsStore();
     return {
@@ -30,6 +39,26 @@ export default {
   computed: {
     projectsList() {
       return this.ProjectsStore.allProjects;
+    },
+    partitionedProjects() {
+      const pinned = [];
+      const others = [];
+
+      this.projectsList.forEach((project) => {
+        if (project.is_pinned === 1) {
+          pinned.push(project);
+        } else {
+          others.push(project);
+        }
+      });
+
+      return { pinned, others };
+    },
+    pinnedProjects() {
+      return this.partitionedProjects.pinned;
+    },
+    otherProjects() {
+      return this.partitionedProjects.others;
     },
   },
   mounted() {

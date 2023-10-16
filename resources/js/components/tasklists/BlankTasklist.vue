@@ -38,7 +38,7 @@
     <!-- End pinned -->
 
     <div class="flex justify-end w-full">
-      <button class="btn btn-tertiary">Submit</button>
+      <button class="btn btn-primary">Submit</button>
     </div>
   </form>
 </template>

@@ -13,7 +13,7 @@ class Tasklist extends Model
 
     protected $primaryKey = "tasklist_id";
 
-    protected $fillable = ["name", "project_id"];
+    protected $fillable = ["name", "is_pinned", "project_id"];
 
     public function tasks(): HasMany
     {

@@ -1,10 +1,14 @@
 import { defineStore } from "pinia";
-import { getAllTasklists, getOneTasklist } from "@/api/TasklistController";
+import {
+  getAllTasklists,
+  getOneTasklist,
+  updateTasklist,
+} from "@/api/TasklistController";
 
 const useTasklistsStore = defineStore("TasklistsStore", {
   state: () => ({
     allTasklists: [],
-    currentTasklist: {},
+    currentTasklist: null,
   }),
   actions: {
     async fetchAllTasklists() {
@@ -34,6 +38,29 @@ const useTasklistsStore = defineStore("TasklistsStore", {
     },
     filterPinnedTasklists(tasklists) {
       return tasklists.filter((tasklist) => tasklist.is_pinned === 1);
+    },
+    async updateTasklist(tasklist) {
+      try {
+        // Update the tasklist in the database
+        const { tasklist_id } = tasklist;
+        const res = await updateTasklist(tasklist);
+        const updatedTasklist = res.data;
+        // Update the tasklist in the store
+        const index = this.allTasklists.findIndex(
+          (storedTasklist) => storedTasklist.tasklist_id === tasklist_id
+        );
+        this.allTasklists[index] = updatedTasklist;
+        // Update the current tasklist if it's the one being updated
+        if (this.currentTasklist.tasklist_id === tasklist_id) {
+          this.currentTasklist = updatedTasklist;
+        }
+        // Return the updated tasklist
+        return updatedTasklist;
+      } catch (error) {
+        console.error("Failed to update tasklist: ", error.message);
+        // Return the original tasklist
+        return tasklist;
+      }
     },
   },
 });

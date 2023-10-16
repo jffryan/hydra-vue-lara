@@ -27,62 +27,20 @@
           </router-link>
         </h5>
       </div>
-
       <div class="flex gap-x-10">
         <div class="w-2/3">
-          <div class="mb-8">
-            <h1>{{ currentTask.name }}</h1>
-            <div class="flex justify-start items-start mb-4">
-              <div class="inline-block btn bg-hydra-cinder-500 mr-8">
-                {{ currentTask.status.name }}
-              </div>
-              <div
-                v-if="currentTask.is_priority"
-                class="inline-block btn bg-hydra-cinder-400"
-              >
-                Priority
-              </div>
-            </div>
-
-            <p v-if="currentTask.description">
-              {{ currentTask.description }}
-            </p>
-          </div>
-          <div>
-            <h2>Subtasks</h2>
-            <ul v-if="currentTask.subtasks?.length > 0">
-              <li
-                v-for="subtask in currentTask.subtasks"
-                :key="subtask.subtask_id"
-              >
-                <input
-                  disabled
-                  type="checkbox"
-                  v-model="subtask.is_complete"
-                  :true-value="1"
-                  :false-value="0"
-                  class="w-4 h-4 text-blue-600 rounded focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600"
-                />
-                <label
-                  :class="[
-                    'ml-2 font-medium',
-                    subtask.is_complete === 1 ? 'line-through' : '',
-                  ]"
-                >
-                  {{ subtask.text }}</label
-                >
-              </li>
-            </ul>
-            <p v-else>No subtasks</p>
-          </div>
+          <EditTask />
         </div>
         <div class="w-1/3">
           <div class="mb-6 flex justify-end">
             <router-link
-              :to="{ name: 'tasks.edit', params: { id: currentTask.task_id } }"
-              class="btn btn-primary"
-              >Edit</router-link
+              :to="{ name: 'tasks.show', params: { id: currentTask.task_id } }"
+              class="btn btn-primary mr-4"
+              >Cancel</router-link
             >
+            <button @click="initateDeleteTask" class="btn btn-danger">
+              Delete
+            </button>
           </div>
         </div>
       </div>
@@ -93,8 +51,13 @@
 <script>
 import { useProjectsStore, useTasklistsStore, useTasksStore } from "@/stores";
 
+import EditTask from "@/components/tasks/EditTask.vue";
+
 export default {
-  name: "TasksShow",
+  name: "TasksEdit",
+  components: {
+    EditTask,
+  },
   setup() {
     const ProjectsStore = useProjectsStore();
     const TasklistsStore = useTasklistsStore();

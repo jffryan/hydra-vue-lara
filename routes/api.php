@@ -24,3 +24,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::apiResource("projects", ProjectController::class);
 Route::apiResource("tasklists", TasklistController::class);
 Route::apiResource("tasks", TaskController::class);
+Route::delete('subtask/{subtask_id}', [TaskController::class, 'deleteSubtask']);

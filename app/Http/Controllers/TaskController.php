@@ -17,7 +17,7 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::with("status")->orderBy("created_at", "ASC")->get();
+        $tasks = Task::with("status", "tasklists")->orderBy("created_at", "ASC")->get();
 
         return response()->json($tasks, 200);
     }
@@ -66,7 +66,7 @@ class TaskController extends Controller
      */
     public function show($id)
     {
-        $task = Task::with("status", "subtasks")->where("task_id", $id)->first();
+        $task = Task::with("status", "subtasks", "tasklist", "tasklist.project")->where("task_id", $id)->first();
 
         return response()->json($task, 200);
     }

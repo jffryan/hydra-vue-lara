@@ -34,6 +34,12 @@ const useProjectsStore = defineStore("ProjectsStore", {
     filterPinnedProjects(projects) {
       return projects.filter((project) => project.is_pinned === 1);
     },
+    updateProject(project) {
+      const index = this.allProjects.findIndex(
+        (p) => p.project_id === project.project_id
+      );
+      this.allProjects[index] = project;
+    },
   },
 });
 

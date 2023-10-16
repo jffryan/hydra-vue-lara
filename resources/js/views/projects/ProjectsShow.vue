@@ -8,34 +8,44 @@
       <h1>{{ currentProject.name }}</h1>
       <div class="flex gap-x-10">
         <div class="w-2/3">
+          <div class="mb-8">
+            <p class="text-lg italic">{{ currentProject.description }}</p>
+          </div>
           <div v-if="currentProject.tasklists.length > 0">
-            <router-link
-              v-for="tasklist in currentProject.tasklists"
-              :key="tasklist.tasklist_id"
-              :to="{
-                name: 'tasklists.show',
-                params: { id: tasklist.tasklist_id },
-              }"
-              class="block mb-4 p-4 bg-hydra-cinder-400 rounded"
-            >
-              {{ tasklist.name }}
-            </router-link>
+            <IndexTable
+              title="Pinned"
+              :tableData="pinnedTasklists"
+              dataType="tasklist"
+              class="mb-12"
+            />
+            <IndexTable
+              title="Other"
+              :tableData="otherTasklists"
+              dataType="tasklist"
+            />
           </div>
         </div>
         <div class="w-1/3">
           <div class="mb-6 flex justify-end">
-            <button v-if="!isAddingTasklist" class="btn btn-primary mr-4">
-              Edit
-            </button>
             <button
               @click="toggleAddTasklist"
               :class="[
-                'btn',
-                isAddingTasklist ? ' bg-hydra-cinder-800 ' : 'btn-tertiary',
+                'btn mr-4',
+                isAddingTasklist ? ' bg-hydra-cinder-800 ' : 'btn-primary',
               ]"
             >
               {{ isAddingTasklist ? "Cancel" : "Add Tasklist" }}
             </button>
+            <router-link
+              v-if="!isAddingTasklist"
+              :to="{
+                name: 'projects.edit',
+                params: { id: currentProject.project_id },
+              }"
+              class="btn btn-tertiary"
+            >
+              Edit
+            </router-link>
           </div>
           <BlankTasklist v-if="isAddingTasklist" class="bg-hydra-cinder-400" />
         </div>
@@ -45,19 +55,23 @@
 </template>
 
 <script>
-import { useProjectsStore } from "@/stores";
+import { useProjectsStore, useTasklistsStore } from "@/stores";
 
 import BlankTasklist from "@/components/tasklists/BlankTasklist.vue";
+import IndexTable from "@/components/tables/IndexTable.vue";
 
 export default {
   name: "ProjectsShow",
   components: {
     BlankTasklist,
+    IndexTable,
   },
   setup() {
     const ProjectsStore = useProjectsStore();
+    const TasklistsStore = useTasklistsStore();
     return {
       ProjectsStore,
+      TasklistsStore,
     };
   },
   data() {
@@ -69,6 +83,29 @@ export default {
   computed: {
     currentProject() {
       return this.ProjectsStore.currentProject;
+    },
+    projectTasklists() {
+      return this.currentProject.tasklists;
+    },
+    partitionedProjects() {
+      const pinned = [];
+      const others = [];
+
+      this.projectTasklists.forEach((tasklist) => {
+        if (tasklist.is_pinned === 1) {
+          pinned.push(tasklist);
+        } else {
+          others.push(tasklist);
+        }
+      });
+
+      return { pinned, others };
+    },
+    pinnedTasklists() {
+      return this.partitionedProjects.pinned;
+    },
+    otherTasklists() {
+      return this.partitionedProjects.others;
     },
   },
   methods: {

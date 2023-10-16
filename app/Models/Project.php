@@ -11,7 +11,7 @@ class Project extends Model
     use HasFactory;
 
     protected $primaryKey = "project_id";
-    protected $fillable = ["name", "is_pinned"];
+    protected $fillable = ["name", "description", "is_pinned"];
 
     public function tasklists(): HasMany
     {

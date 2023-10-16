@@ -5,11 +5,11 @@
         >Name</label
       >
       <input
-        class="bg-hydra-cinder-600 border-b border-zinc-400 p-2 w-full mb-2"
         type="text"
         id="name"
         name="name"
         v-model="projectForm.name"
+        class="text-4xl bg-hydra-cinder-600 border-b border-zinc-400 p-2 w-full mb-2"
       />
       <p v-if="!isValid.name" class="p-2 text-red-300">
         Enter a name for this project.
@@ -47,10 +47,21 @@
     <!-- End pinned -->
 
     <div class="flex justify-end w-full">
-      <button type="submit" class="btn btn-primary mr-4">Create Project</button>
-      <button @click.prevent="addTasklistToProject" class="btn btn-tertiary">
+      <button type="submit" class="btn btn-primary mr-4">Submit changes</button>
+      <button
+        @click.prevent="addTasklistToProject"
+        class="btn btn-tertiary mr-4"
+      >
         Add tasklist
       </button>
+      <router-link
+        :to="{
+          name: 'projects.show',
+          params: { id: projectId },
+        }"
+        class="btn btn-secondary"
+        >Cancel</router-link
+      >
     </div>
   </form>
 </template>
@@ -59,11 +70,11 @@
 import { every } from "lodash";
 
 import { useProjectsStore } from "@/stores";
-import { createProject } from "@/api/ProjectController";
+import { updateProject } from "@/api/ProjectController";
 import validators from "@/utils/validators";
 
 export default {
-  name: "BlankProject",
+  name: "EditProject",
   setup() {
     const ProjectsStore = useProjectsStore();
 
@@ -78,6 +89,9 @@ export default {
     };
   },
   computed: {
+    projectId() {
+      return this.ProjectsStore.currentProject.project_id;
+    },
     isProjectValid() {
       return every(this.isValid);
     },
@@ -98,19 +112,31 @@ export default {
       this.validateProject();
       // If project is not valid, exit
       if (!this.isProjectValid) return;
-      await this.createNewProject();
+      await this.updateCurrentProject();
     },
-    async createNewProject() {
-      const res = await createProject(this.projectForm);
+    async updateCurrentProject() {
+      const res = await updateProject(this.projectForm);
       // Push new project from DB
-      const newProject = res.data;
-      this.ProjectsStore.allProjects.push(newProject);
+      const updatedProject = res.data;
+      this.ProjectsStore.updateProject(updatedProject);
 
-      this.projectForm = this.initializeForm();
+      this.$router.push({
+        name: "projects.show",
+        params: { id: updatedProject.project_id },
+      });
     },
     validateProject() {
       this.isValid.name = validators.validateString(this.projectForm.name);
     },
+  },
+  mounted() {
+    const { currentProject } = this.ProjectsStore;
+    if (!currentProject) {
+      console.error("No Project found");
+      return;
+    }
+
+    this.projectForm = currentProject;
   },
 };
 </script>

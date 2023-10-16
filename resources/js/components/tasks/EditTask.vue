@@ -1,10 +1,5 @@
 <template>
-  <form @submit.prevent="submitTaskForm" class="mb-7 py-6 px-4 rounded-xl">
-    <h2>Create Task</h2>
-    <div>
-      <p>Project: {{ currentProjectName }}</p>
-      <p>Tasklist: {{ currentTasklistName }}</p>
-    </div>
+  <form @submit.prevent="submitTaskForm" class="mb-7">
     <div class="mb-6">
       <label for="title" class="block mb-2 font-bold text-zinc-300 mr-6"
         >Name</label
@@ -80,7 +75,16 @@
           class="flex items-center mb-6"
         >
           <input
+            v-if="subtask.subtask_id"
+            type="checkbox"
+            v-model="subtask.is_complete"
+            :true-value="1"
+            :false-value="0"
+            class="w-6 h-6 rounded mr-4"
+          />
+          <input
             class="bg-hydra-cinder-600 border-b border-zinc-400 p-2 w-full mb-2"
+            :class="[subtask.is_complete === 1 ? 'line-through' : '']"
             type="text"
             id="title"
             name="title"
@@ -102,7 +106,7 @@
     </div>
     <!-- END SUBTASKS -->
     <div class="flex justify-end w-full">
-      <button class="btn btn-primary">Submit</button>
+      <button class="btn btn-tertiary">Submit</button>
     </div>
   </form>
 </template>
@@ -110,17 +114,18 @@
 <script>
 import { every } from "lodash";
 
-import { createTask, deleteSubtask } from "@/api/TaskController";
-import { useTasklistsStore } from "@/stores";
+import { updateTask, deleteSubtask } from "@/api/TaskController";
+import { useTasklistsStore, useTasksStore } from "@/stores";
 import validators from "@/utils/validators";
 
 import DeleteIcon from "@/components/svgs/DeleteIcon.vue";
 
 export default {
-  name: "BlankTask",
+  name: "EditTask",
   setup() {
     const TasklistsStore = useTasklistsStore();
-    return { TasklistsStore };
+    const TasksStore = useTasksStore();
+    return { TasklistsStore, TasksStore };
   },
   components: {
     DeleteIcon,
@@ -199,19 +204,27 @@ export default {
       // If task is not valid, exit
       if (!this.isTaskValid) return;
 
-      await this.createNewTask();
+      await this.submitUpdateTask();
     },
-    async createNewTask() {
-      const taskForm = {
-        ...this.taskForm,
-        tasklist_id: this.currentTasklistId,
-      };
+    async submitUpdateTask() {
       // Submit via the API
-      const res = await createTask(taskForm);
-      this.TasklistsStore.currentTasklist.tasks.push(res.data);
+      const res = await updateTask(this.taskForm);
+      // this.TasklistsStore.currentTasklist.tasks.push(res.data);
       // Reset UI
-      this.resetTaskForm();
+      this.$router.push({
+        name: "tasks.show",
+        params: { id: res.data.task_id },
+      });
     },
+  },
+  mounted() {
+    const { currentTask } = this.TasksStore;
+    if (!currentTask) {
+      console.error("No task found");
+      return;
+    }
+
+    this.taskForm = currentTask;
   },
 };
 </script>

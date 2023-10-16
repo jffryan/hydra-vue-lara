@@ -13,7 +13,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::orderBy("created_at", "ASC")->get();
+        $projects = Project::orderBy("name", "ASC")->get();
 
         return response()->json($projects, 200);
     }
@@ -50,8 +50,15 @@ class ProjectController extends Controller
      */
     public function show($id)
     {
-        $project = Project::with("tasklists", "tasklists.tasks")->where("project_id", $id)->first();
-
+        $project = Project::with([
+            'tasklists' => function ($query) {
+                $query->orderBy('name', 'ASC');
+            }, 
+            'tasklists.tasks'
+        ])
+        ->where("project_id", $id)
+        ->first();
+    
         return response()->json($project, 200);
     }
 

@@ -29,14 +29,29 @@ const router = createRouter({
       component: () => import("@/views/projects/ProjectsCreate.vue"),
     },
     {
+      path: "/projects/:id/edit",
+      name: "projects.edit",
+      component: () => import("@/views/projects/ProjectsEdit.vue"),
+    },
+    {
       path: "/tasklists/:id",
       name: "tasklists.show",
       component: () => import("@/views/tasklists/TasklistsShow.vue"),
     },
     {
+      path: "/tasklists/:id/edit",
+      name: "tasklists.edit",
+      component: () => import("@/views/tasklists/TasklistsEdit.vue"),
+    },
+    {
       path: "/tasks/:id",
       name: "tasks.show",
       component: () => import("@/views/tasks/TasksShow.vue"),
+    },
+    {
+      path: "/tasks/:id/edit",
+      name: "tasks.edit",
+      component: () => import("@/views/tasks/TasksEdit.vue"),
     },
   ],
 });
