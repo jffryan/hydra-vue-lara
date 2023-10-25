@@ -13,5 +13,14 @@ const updateTasklist = (tasklist) =>
   makeRequest("patch", buildUrl("tasklists", tasklist.tasklist_id), {
     tasklist,
   });
+// Delete
+const deleteTasklist = (tasklist_id) =>
+  makeRequest("delete", buildUrl("tasklists", tasklist_id));
 
-export { getAllTasklists, getOneTasklist, createTasklist, updateTasklist };
+export {
+  getAllTasklists,
+  getOneTasklist,
+  createTasklist,
+  updateTasklist,
+  deleteTasklist,
+};

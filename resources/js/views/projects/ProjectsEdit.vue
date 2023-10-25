@@ -4,7 +4,11 @@
       <div class="skeleton-loader bg-hydra-cinder-400"></div>
     </div>
     <div v-else-if="currentProject">
-      <EditProject />
+      <div class="flex gap-x-10">
+        <div class="w-2/3">
+          <EditProject />
+        </div>
+      </div>
     </div>
   </main>
 </template>

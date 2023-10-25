@@ -5,51 +5,24 @@
     </div>
     <!-- End skeleton loader -->
     <div v-else-if="currentProject">
-      <h1>{{ currentProject.name }}</h1>
-      <div class="flex gap-x-10">
-        <div class="w-2/3">
-          <div class="mb-8">
-            <p class="text-lg italic">{{ currentProject.description }}</p>
-          </div>
-          <div v-if="currentProject.tasklists.length > 0">
-            <IndexTable
-              title="Pinned"
-              :tableData="pinnedTasklists"
-              dataType="tasklist"
-              class="mb-12"
-            />
-            <IndexTable
-              title="Other"
-              :tableData="otherTasklists"
-              dataType="tasklist"
-            />
-          </div>
-        </div>
-        <div class="w-1/3">
-          <div class="mb-6 flex justify-end">
-            <button
-              @click="toggleAddTasklist"
-              :class="[
-                'btn mr-4',
-                isAddingTasklist ? ' bg-hydra-cinder-800 ' : 'btn-primary',
-              ]"
-            >
-              {{ isAddingTasklist ? "Cancel" : "Add Tasklist" }}
-            </button>
-            <router-link
-              v-if="!isAddingTasklist"
-              :to="{
-                name: 'projects.edit',
-                params: { id: currentProject.project_id },
-              }"
-              class="btn btn-tertiary"
-            >
-              Edit
-            </router-link>
-          </div>
-          <BlankTasklist v-if="isAddingTasklist" class="bg-hydra-cinder-400" />
+      <div class="flex justify-between">
+        <h1>{{ currentProject.name }}</h1>
+        <div class="mb-6 flex justify-end">
+          <button
+            :class="viewFormat === 'list' ? 'underline font-bold' : ''"
+            class="mr-4 hover:underline"
+          >
+            List view
+          </button>
+          <button
+            :class="viewFormat === 'app' ? 'underline font-bold' : ''"
+            class="hover:underline"
+          >
+            App view
+          </button>
         </div>
       </div>
+      <ProjectListLayout />
     </div>
   </main>
 </template>
@@ -57,14 +30,12 @@
 <script>
 import { useProjectsStore, useTasklistsStore } from "@/stores";
 
-import BlankTasklist from "@/components/tasklists/BlankTasklist.vue";
-import IndexTable from "@/components/tables/IndexTable.vue";
+import ProjectListLayout from "@/components/projects/ProjectListLayout.vue";
 
 export default {
   name: "ProjectsShow",
   components: {
-    BlankTasklist,
-    IndexTable,
+    ProjectListLayout,
   },
   setup() {
     const ProjectsStore = useProjectsStore();
@@ -77,45 +48,34 @@ export default {
   data() {
     return {
       isLoading: true,
-      isAddingTasklist: false,
     };
   },
   computed: {
     currentProject() {
       return this.ProjectsStore.currentProject;
     },
-    projectTasklists() {
-      return this.currentProject.tasklists;
+    viewFormat() {
+      return this.ProjectsStore.viewFormat;
     },
-    partitionedProjects() {
-      const pinned = [];
-      const others = [];
-
-      this.projectTasklists.forEach((tasklist) => {
-        if (tasklist.is_pinned === 1) {
-          pinned.push(tasklist);
-        } else {
-          others.push(tasklist);
-        }
-      });
-
-      return { pinned, others };
+  },
+  watch: {
+    "$route.params.id": {
+      immediate: true,
+      handler: "fetchCurrentProjectFromRoute",
     },
-    pinnedTasklists() {
-      return this.partitionedProjects.pinned;
-    },
-    otherTasklists() {
-      return this.partitionedProjects.others;
+    currentProject: {
+      immediate: false,
+      handler: "setProjectTasklists",
     },
   },
   methods: {
-    toggleAddTasklist() {
-      this.isAddingTasklist = !this.isAddingTasklist;
+    fetchCurrentProjectFromRoute() {
+      this.ProjectsStore.fetchCurrentProject(this.$route.params.id);
+      this.isLoading = false;
     },
-  },
-  async mounted() {
-    await this.ProjectsStore.fetchCurrentProject(this.$route.params.id);
-    this.isLoading = false;
+    setProjectTasklists() {
+      this.TasklistsStore.setProjectTasklists(this.currentProject.tasklists);
+    },
   },
 };
 </script>

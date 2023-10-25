@@ -15,7 +15,7 @@ class TasklistController extends Controller
     public function index()
     {
         $tasklists = Tasklist::with("tasks", "tasks.status")->orderBy("created_at", "ASC")->get();
-        
+
         return response()->json($tasklists, 200);
     }
 
@@ -58,7 +58,7 @@ class TasklistController extends Controller
         if (!$tasklist) {
             return response()->json(['error' => 'Tasklist not found'], 404);
         }
-        
+
         return response()->json($tasklist, 200);
     }
 
@@ -83,13 +83,13 @@ class TasklistController extends Controller
     public function update(Request $request, $id)
     {
         $existing_tasklist = Tasklist::findOrFail($id);
-    
+
         $attributes = $request->input('tasklist');
-    
+
         $existing_tasklist->update($attributes);
-    
+
         $existing_tasklist->refresh()->load("tasks", "tasks.status", "tasks.subtasks", "project");
-    
+
         return response()->json($existing_tasklist, 200);
     }
 
@@ -101,6 +101,14 @@ class TasklistController extends Controller
      */
     public function destroy(Tasklist $tasklist)
     {
-        //
+        // For debugging or intentional error, use:
+        // return response()->json(['error' => 'Intentional fatal error.' . $id], 400);
+
+        if ($tasklist) {
+            $tasklist->delete();
+            return response()->json(null, 204);
+        }
+    
+        return response()->json(['error' => 'Tasklist not found'], 404);
     }
 }

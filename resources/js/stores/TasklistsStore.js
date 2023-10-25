@@ -3,12 +3,14 @@ import {
   getAllTasklists,
   getOneTasklist,
   updateTasklist,
+  deleteTasklist,
 } from "@/api/TasklistController";
 
 const useTasklistsStore = defineStore("TasklistsStore", {
   state: () => ({
     allTasklists: [],
     currentTasklist: null,
+    projectTasklists: null,
   }),
   actions: {
     async fetchAllTasklists() {
@@ -61,6 +63,33 @@ const useTasklistsStore = defineStore("TasklistsStore", {
         // Return the original tasklist
         return tasklist;
       }
+    },
+    async deleteCurrentTasklist(tasklist_id) {
+      try {
+        await deleteTasklist(tasklist_id);
+        return {
+          success: true,
+        };
+      } catch (err) {
+        return {
+          success: false,
+          message: `Error deleting tasklist: ${err.message}`,
+        };
+      }
+    },
+    clearTasklistFromState(tasklist_id) {
+      this.allTasklists = this.allTasklists.filter(
+        (tasklist) => tasklist.tasklist_id !== tasklist_id
+      );
+      if (
+        this.currentTasklist &&
+        this.currentTasklist.tasklist_id === tasklist_id
+      ) {
+        this.currentTasklist = null;
+      }
+    },
+    setProjectTasklists(tasklists) {
+      this.projectTasklists = tasklists;
     },
   },
 });

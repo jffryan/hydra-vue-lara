@@ -144,6 +144,9 @@ class TaskController extends Controller
      */
     public function destroy($id)
     {
+        // For debugging or intentional error, use:
+        // return response()->json(['error' => 'Intentional fatal error.' . $id], 400);
+
         $existingTask = Task::find($id);
 
         if ($existingTask) {
@@ -151,6 +154,6 @@ class TaskController extends Controller
             return response()->json(null, 204);
         }
 
-        return "Task not found";
+        return response()->json(['error' => 'Task not found'], 404);
     }
 }

@@ -1,5 +1,5 @@
 <template>
-  <nav>
+  <nav v-if="AuthStore.isLoggedIn">
     <ul>
       <li class="mb-2">
         <router-link :to="{ name: 'projects.index' }">Projects</router-link>
@@ -10,7 +10,7 @@
         >
       </li>
       <li
-        v-for="project in pinnedProjects"
+        v-for="project in projectsList"
         :key="project.project_id"
         class="mb-2 ml-4"
       >
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { useProjectsStore } from "@/stores";
+import { useAuthStore, useProjectsStore } from "@/stores";
 
 import PlusIcon from "@/components/svgs/PlusIcon.vue";
 
@@ -34,8 +34,10 @@ export default {
     PlusIcon,
   },
   setup() {
+    const AuthStore = useAuthStore();
     const ProjectsStore = useProjectsStore();
     return {
+      AuthStore,
       ProjectsStore,
     };
   },
@@ -43,9 +45,14 @@ export default {
     projectsList() {
       return this.ProjectsStore.allProjects;
     },
-    pinnedProjects() {
-      return this.ProjectsStore.filterPinnedProjects(this.projectsList);
-    },
+  },
+  mounted() {
+    if (
+      this.ProjectsStore.allProjects.length === 0 &&
+      this.AuthStore.isLoggedIn
+    ) {
+      this.ProjectsStore.fetchAllProjects();
+    }
   },
 };
 </script>

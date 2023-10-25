@@ -14,4 +14,14 @@ const createProject = (project) =>
 const updateProject = (project) =>
   makeRequest("patch", buildUrl("projects", project.project_id), { project });
 
-export { getAllProjects, getOneProject, createProject, updateProject };
+// Delete
+const deleteProject = (project_id) =>
+  makeRequest("delete", buildUrl("projects", project_id));
+
+export {
+  getAllProjects,
+  getOneProject,
+  createProject,
+  updateProject,
+  deleteProject,
+};

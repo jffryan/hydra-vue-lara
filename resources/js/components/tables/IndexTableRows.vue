@@ -46,7 +46,10 @@ export default {
   methods: {
     getRowClass(row) {
       if (row.status_id === 2) {
-        return "bg-hydra-green-700 hover:bg-hydra-green-500";
+        return "bg-hydra-cinder-400 hover:bg-hydra-cinder-600";
+      }
+      if (row.status_id === 3) {
+        return "line-through text-hydra-cinder-400 hover:bg-hydra-cinder-600";
       }
       return "bg-hydra-cinder-600 hover:bg-hydra-cinder-400";
     },

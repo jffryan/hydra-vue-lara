@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\Project;
 
@@ -53,12 +54,12 @@ class ProjectController extends Controller
         $project = Project::with([
             'tasklists' => function ($query) {
                 $query->orderBy('name', 'ASC');
-            }, 
+            },
             'tasklists.tasks'
         ])
-        ->where("project_id", $id)
-        ->first();
-    
+            ->where("project_id", $id)
+            ->first();
+
         return response()->json($project, 200);
     }
 
@@ -99,6 +100,8 @@ class ProjectController extends Controller
      */
     public function destroy($id)
     {
+        // For debugging or intentional error, use:
+        // return response()->json(['error' => 'Intentional fatal error. ' . $id], 400);
         $existingProject = Project::find($id);
 
         if ($existingProject) {

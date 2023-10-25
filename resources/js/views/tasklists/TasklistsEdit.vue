@@ -48,20 +48,6 @@
               </label>
             </div>
             <!-- End pinned -->
-
-            <div v-if="currentTasklist?.tasks.length > 0" class="mb-6">
-              <router-link
-                v-for="task in currentTasklist.tasks"
-                :key="task.task_id"
-                :to="{
-                  name: 'tasks.show',
-                  params: { id: task.task_id },
-                }"
-                class="block mb-4 p-4 bg-hydra-cinder-400 rounded"
-              >
-                {{ task.name }}
-              </router-link>
-            </div>
             <div>
               <button class="btn btn-primary">Submit</button>
             </div>
@@ -69,6 +55,9 @@
         </div>
         <div class="w-1/3">
           <div class="flex justify-end">
+            <button @click="initateDeleteTasklist" class="btn btn-danger mr-4">
+              Delete
+            </button>
             <router-link
               :to="{
                 name: 'tasklists.show',
@@ -87,16 +76,18 @@
 <script>
 import { every } from "lodash";
 
-import { useProjectsStore, useTasklistsStore } from "@/stores";
+import { usePopupStore, useProjectsStore, useTasklistsStore } from "@/stores";
 
 import validators from "@/utils/validators";
 
 export default {
   name: "TasklistsEdit",
   setup() {
+    const PopupStore = usePopupStore();
     const ProjectsStore = useProjectsStore();
     const TasklistsStore = useTasklistsStore();
     return {
+      PopupStore,
       ProjectsStore,
       TasklistsStore,
     };
@@ -139,6 +130,12 @@ export default {
     },
     validateTasklist() {
       this.isValid.name = validators.validateString(this.tasklistForm.name);
+    },
+    initateDeleteTasklist() {
+      this.PopupStore.setActivePopup(
+        "DeleteTasklistConfirmation",
+        this.currentTasklist
+      );
     },
   },
   async mounted() {

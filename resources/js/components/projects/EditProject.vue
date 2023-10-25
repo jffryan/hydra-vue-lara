@@ -49,10 +49,10 @@
     <div class="flex justify-end w-full">
       <button type="submit" class="btn btn-primary mr-4">Submit changes</button>
       <button
-        @click.prevent="addTasklistToProject"
-        class="btn btn-tertiary mr-4"
+        @click.prevent="initiateDeleteProject"
+        class="btn btn-danger mr-4"
       >
-        Add tasklist
+        Delete
       </button>
       <router-link
         :to="{
@@ -69,16 +69,17 @@
 <script>
 import { every } from "lodash";
 
-import { useProjectsStore } from "@/stores";
+import { usePopupStore, useProjectsStore } from "@/stores";
 import { updateProject } from "@/api/ProjectController";
 import validators from "@/utils/validators";
 
 export default {
   name: "EditProject",
   setup() {
+    const PopupStore = usePopupStore();
     const ProjectsStore = useProjectsStore();
 
-    return { ProjectsStore };
+    return { PopupStore, ProjectsStore };
   },
   data() {
     return {
@@ -89,8 +90,11 @@ export default {
     };
   },
   computed: {
+    currentProject() {
+      return this.ProjectsStore.currentProject;
+    },
     projectId() {
-      return this.ProjectsStore.currentProject.project_id;
+      return this.currentProject.project_id;
     },
     isProjectValid() {
       return every(this.isValid);
@@ -103,9 +107,6 @@ export default {
         description: "",
         is_pinned: 0,
       };
-    },
-    addTasklistToProject() {
-      console.log("Click from addTaskListToProject");
     },
     async submitProjectForm() {
       // validate before anything else
@@ -127,6 +128,12 @@ export default {
     },
     validateProject() {
       this.isValid.name = validators.validateString(this.projectForm.name);
+    },
+    initiateDeleteProject() {
+      this.PopupStore.setActivePopup(
+        "DeleteProjectConfirmation",
+        this.currentProject
+      );
     },
   },
   mounted() {

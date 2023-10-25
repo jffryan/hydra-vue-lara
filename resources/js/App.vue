@@ -8,17 +8,28 @@
       <RouterView class="py-6 pl-[20rem] w-full" />
     </div>
   </div>
+  <PopupOverlay v-if="PopupStore.isActive" />
 </template>
 
 <script>
+import { usePopupStore } from "@/stores";
+
 import HeaderNav from "@/components/navs/HeaderNav.vue";
 import SidebarNav from "@/components/navs/SidebarNav.vue";
+import PopupOverlay from "@/components/popups/PopupOverlay.vue";
 
 export default {
   name: "App",
   components: {
     HeaderNav,
     SidebarNav,
+    PopupOverlay,
+  },
+  setup() {
+    const PopupStore = usePopupStore();
+    return {
+      PopupStore,
+    };
   },
 };
 </script>

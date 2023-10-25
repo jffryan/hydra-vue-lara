@@ -1,6 +1,6 @@
 <template>
   <div
-    class="sticky top-0 z-40 w-full bg-hydra-cinder-800 flex-none transition-colors duration-500 lg:z-50 lg:border-b lg:border-slate-900/10"
+    class="sticky top-0 z-40 w-full bg-hydra-cinder-800 flex-none transition-colors duration-500 lg:z-20 lg:border-b lg:border-slate-900/10"
   >
     <div class="max-w-8xl mx-auto">
       <div class="py-4 border-b border-slate-900/10 lg:border-0 mx-4 lg:mx-0">
@@ -66,7 +66,12 @@
             </div>
 
             <router-link :to="{ name: 'about' }">About</router-link>
-            <button class="btn btn-primary">Login</button>
+            <router-link
+              v-if="!isLoggedIn"
+              :to="{ name: 'login' }"
+              class="btn btn-primary"
+              >Login</router-link
+            >
           </div>
         </div>
       </div>
@@ -75,13 +80,27 @@
 </template>
 
 <script>
+import { useAuthStore } from "@/stores";
+
 export default {
   name: "HeaderNav",
+  setup() {
+    const AuthStore = useAuthStore();
+
+    return {
+      AuthStore,
+    };
+  },
   data() {
     return {
       showDropdown: false,
       hideTimeout: null,
     };
+  },
+  computed: {
+    isLoggedIn() {
+      return this.AuthStore.isLoggedIn;
+    },
   },
   methods: {
     clearHideTimeout() {

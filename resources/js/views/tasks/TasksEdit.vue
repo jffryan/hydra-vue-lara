@@ -49,7 +49,12 @@
 </template>
 
 <script>
-import { useProjectsStore, useTasklistsStore, useTasksStore } from "@/stores";
+import {
+  usePopupStore,
+  useProjectsStore,
+  useTasklistsStore,
+  useTasksStore,
+} from "@/stores";
 
 import EditTask from "@/components/tasks/EditTask.vue";
 
@@ -59,10 +64,12 @@ export default {
     EditTask,
   },
   setup() {
+    const PopupStore = usePopupStore();
     const ProjectsStore = useProjectsStore();
     const TasklistsStore = useTasklistsStore();
     const TasksStore = useTasksStore();
     return {
+      PopupStore,
       ProjectsStore,
       TasklistsStore,
       TasksStore,
@@ -82,6 +89,14 @@ export default {
     },
     currentTask() {
       return this.TasksStore.currentTask;
+    },
+  },
+  methods: {
+    initateDeleteTask() {
+      this.PopupStore.setActivePopup(
+        "DeleteTaskConfirmation",
+        this.currentTask
+      );
     },
   },
   async mounted() {

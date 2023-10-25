@@ -1,10 +1,15 @@
 import { defineStore } from "pinia";
-import { getAllProjects, getOneProject } from "@/api/ProjectController";
+import {
+  getAllProjects,
+  getOneProject,
+  deleteProject,
+} from "@/api/ProjectController";
 
 const useProjectsStore = defineStore("ProjectsStore", {
   state: () => ({
     allProjects: [],
     currentProject: null,
+    viewFormat: "list",
   }),
   actions: {
     async fetchAllProjects() {
@@ -39,6 +44,27 @@ const useProjectsStore = defineStore("ProjectsStore", {
         (p) => p.project_id === project.project_id
       );
       this.allProjects[index] = project;
+    },
+    async deleteCurrentProject(project_id) {
+      try {
+        await deleteProject(project_id);
+        return {
+          success: true,
+        };
+      } catch (err) {
+        return {
+          success: false,
+          message: `Error deleting project: ${err.message}`,
+        };
+      }
+    },
+    clearProjectFromState(project_id) {
+      this.allProjects = this.allProjects.filter(
+        (project) => project.project_id !== project_id
+      );
+      if (this.currentProject?.project_id === project_id) {
+        this.currentProject = null;
+      }
     },
   },
 });

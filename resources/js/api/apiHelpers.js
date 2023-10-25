@@ -5,9 +5,9 @@ import axios from "axios";
 // Make request
 export const makeRequest = async (method, url, data) => {
   const config = {
-    method: method,
-    url: url,
-    data: data,
+    method,
+    url,
+    data,
   };
 
   const response = await axios(config);
@@ -21,6 +21,5 @@ export const buildUrl = (entity, id) => {
   if (id) {
     url += id;
   }
-
   return url;
 };
