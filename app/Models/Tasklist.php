@@ -24,4 +24,8 @@ class Tasklist extends Model
     {
         return $this->belongsTo(Project::class, "project_id");
     }
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
 }

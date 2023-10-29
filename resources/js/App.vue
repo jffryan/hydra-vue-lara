@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { usePopupStore } from "@/stores";
+import { useAuthStore, usePopupStore } from "@/stores";
 
 import HeaderNav from "@/components/navs/HeaderNav.vue";
 import SidebarNav from "@/components/navs/SidebarNav.vue";
@@ -26,10 +26,18 @@ export default {
     PopupOverlay,
   },
   setup() {
+    const AuthStore = useAuthStore();
     const PopupStore = usePopupStore();
     return {
+      AuthStore,
       PopupStore,
     };
+  },
+  async mounted() {
+    const response = await this.AuthStore.checkAuthentication();
+    if (response.status === 200 && response.data) {
+      this.AuthStore.setLogin(response.data);
+    }
   },
 };
 </script>

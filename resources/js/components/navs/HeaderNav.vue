@@ -72,6 +72,12 @@
               class="btn btn-primary"
               >Login</router-link
             >
+            <router-link
+              v-if="isLoggedIn"
+              :to="{ name: 'dashboard.home' }"
+              class="btn btn-primary"
+              >Dashboard</router-link
+            >
           </div>
         </div>
       </div>

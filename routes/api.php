@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TasklistController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\Auth\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,7 +22,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource("projects", ProjectController::class);
-Route::apiResource("tasklists", TasklistController::class);
-Route::apiResource("tasks", TaskController::class);
-Route::delete('subtask/{subtask_id}', [TaskController::class, 'deleteSubtask']);
+Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource("projects", ProjectController::class);
+    Route::apiResource("tasklists", TasklistController::class);
+    Route::apiResource("tasks", TaskController::class);
+    Route::delete('subtask/{subtask_id}', [TaskController::class, 'deleteSubtask']);
+});
+

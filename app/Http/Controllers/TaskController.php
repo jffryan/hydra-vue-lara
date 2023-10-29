@@ -17,7 +17,7 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::with("status", "tasklists")->orderBy("created_at", "ASC")->get();
+        $tasks = auth()->user()->tasks()->with("status", "tasklist")->orderBy("created_at", "ASC")->get();
 
         return response()->json($tasks, 200);
     }

@@ -45,14 +45,19 @@ export default {
     projectsList() {
       return this.ProjectsStore.allProjects;
     },
+    isLoggedIn() {
+      return this.AuthStore.isLoggedIn;
+    },
   },
-  mounted() {
-    if (
-      this.ProjectsStore.allProjects.length === 0 &&
-      this.AuthStore.isLoggedIn
-    ) {
-      this.ProjectsStore.fetchAllProjects();
-    }
+  watch: {
+    isLoggedIn: {
+      immediate: true,
+      handler() {
+        if (this.isLoggedIn && this.projectsList.length === 0) {
+          this.ProjectsStore.fetchAllProjects();
+        }
+      },
+    },
   },
 };
 </script>

@@ -4,9 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Project;
+use App\Models\User;
 
 class ProjectController extends Controller
 {
+    /**
+     * Middleware
+     * 
+     */
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +23,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::orderBy("name", "ASC")->get();
+        $projects = auth()->user()->projects()->orderBy("name", "ASC")->get();
 
         return response()->json($projects, 200);
     }
@@ -38,8 +47,8 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         $project_data = $request->project;
-        $new_project = Project::create($project_data);
-
+        $new_project = new Project($project_data);
+        auth()->user()->projects()->save($new_project);
         return response()->json($new_project, 201);
     }
 
@@ -51,7 +60,7 @@ class ProjectController extends Controller
      */
     public function show($id)
     {
-        $project = Project::with([
+        $project = auth()->user()->projects()->with([
             'tasklists' => function ($query) {
                 $query->orderBy('name', 'ASC');
             },
@@ -59,6 +68,11 @@ class ProjectController extends Controller
         ])
             ->where("project_id", $id)
             ->first();
+
+        if (!$project) {
+            return response()->json(['message' => 'Project not found'], 404);
+        }
+
 
         return response()->json($project, 200);
     }
@@ -83,7 +97,7 @@ class ProjectController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $existing_project = Project::findOrFail($id);
+        $existing_project = auth()->user()->projects()->findOrFail($id);
         $patch_project = $request["project"];
 
         $existing_project->fill($patch_project);
@@ -102,7 +116,7 @@ class ProjectController extends Controller
     {
         // For debugging or intentional error, use:
         // return response()->json(['error' => 'Intentional fatal error. ' . $id], 400);
-        $existingProject = Project::find($id);
+        $existingProject = auth()->user()->projects()->find($id);
 
         if ($existingProject) {
             $existingProject->delete();

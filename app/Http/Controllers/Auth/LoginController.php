@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -36,5 +37,22 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    public function login(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|string',
+            'password' => 'required|string',
+        ]);
+    
+        // Attempt to authenticate the user
+        if (auth()->attempt($request->only('username', 'password'))) {
+            // User authenticated successfully
+            return response()->json(['message' => 'Logged in successfully'], 200);
+        } else {
+            // Authentication failed
+            return response()->json(['message' => 'Authentication failed'], 401);
+        }
     }
 }

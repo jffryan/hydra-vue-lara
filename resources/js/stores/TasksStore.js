@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getOneTask, deleteTask } from "@/api/TaskController";
+import { getAllTasks, getOneTask, deleteTask } from "@/api/TaskController";
 
 const useTasksStore = defineStore("TasksStore", {
   state: () => ({
@@ -8,16 +8,24 @@ const useTasksStore = defineStore("TasksStore", {
     currentTask: null,
   }),
   actions: {
-    setTasks(tasks) {
-      this.tasks = tasks;
+    // Set internal
+    setAllTasks(tasks) {
+      this.allTasks = tasks;
     },
-    setTask(task) {
-      this.task = task;
+    setAllCurrentTasks(tasks) {
+      this.allCurrentTasks = tasks;
+    },
+    setCurrentTask(task) {
+      this.currentTask = task;
+    },
+    // Fetch external
+    async fetchAllTasks() {
+      const res = await getAllTasks();
+      this.setAllTasks(res.data);
+      return res.data;
     },
     async fetchCurrentTask(task_id) {
-      let currentTask = this.allCurrentTasks.find(
-        (task) => task.task_id === task_id
-      );
+      let currentTask = this.allTasks.find((task) => task.task_id === task_id);
       if (!currentTask) {
         const res = await getOneTask(task_id);
         currentTask = res.data;
@@ -25,9 +33,7 @@ const useTasksStore = defineStore("TasksStore", {
       this.setCurrentTask(currentTask);
       return currentTask;
     },
-    setCurrentTask(task) {
-      this.currentTask = task;
-    },
+    // Delete
     async deleteCurrentTask(task_id) {
       try {
         await deleteTask(task_id);
@@ -52,6 +58,12 @@ const useTasksStore = defineStore("TasksStore", {
       if (this.currentTask && this.currentTask.task_id === task_id) {
         this.currentTask = null;
       }
+    },
+    // Utility
+    filterPriorityTasks(allTasks) {
+      return allTasks.filter(
+        (task) => task.status_id === 2 || task.is_priority === 1
+      );
     },
   },
 });
