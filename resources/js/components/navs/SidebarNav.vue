@@ -1,12 +1,17 @@
 <template>
   <nav v-if="AuthStore.isLoggedIn">
+    <router-link
+      :to="{ name: 'dashboard.home' }"
+      class="font-bold inline-block mb-4"
+      >Dashboard</router-link
+    >
     <ul>
       <li class="mb-2">
         <router-link :to="{ name: 'projects.index' }">Projects</router-link>
       </li>
       <li class="mb-2">
         <router-link :to="{ name: 'projects.create' }" class="flex items-center"
-          ><PlusIcon class="mr-2" /> New Project</router-link
+          ><PlusIcon class="mr-1" />New Project</router-link
         >
       </li>
       <li
@@ -15,7 +20,10 @@
         class="mb-2 ml-4"
       >
         <router-link
-          :to="{ name: 'projects.show', params: { id: project.project_id } }"
+          :to="{
+            name: 'projects.tasks.index',
+            params: { id: project.project_id },
+          }"
           >{{ project.name }}</router-link
         >
       </li>

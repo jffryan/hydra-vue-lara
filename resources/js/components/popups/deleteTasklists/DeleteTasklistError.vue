@@ -49,7 +49,7 @@ export default {
         this.ProjectsStore.currentProject.project_id
       ) {
         this.$router.push({
-          name: "projects.show",
+          name: "projects.tasks.index",
           params: {
             id: this.ProjectsStore.currentProject.project_id,
           },

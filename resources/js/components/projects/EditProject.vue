@@ -56,7 +56,7 @@
       </button>
       <router-link
         :to="{
-          name: 'projects.show',
+          name: 'projects.tasks.index',
           params: { id: projectId },
         }"
         class="btn btn-secondary"
@@ -122,7 +122,7 @@ export default {
       this.ProjectsStore.updateProject(updatedProject);
 
       this.$router.push({
-        name: "projects.show",
+        name: "projects.tasks.index",
         params: { id: updatedProject.project_id },
       });
     },

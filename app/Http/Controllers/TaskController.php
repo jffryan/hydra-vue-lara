@@ -17,7 +17,7 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = auth()->user()->tasks()->with("status", "tasklist")->orderBy("created_at", "ASC")->get();
+        $tasks = auth()->user()->tasks()->with("status", "tasklist", "project")->orderBy("created_at", "ASC")->get();
 
         return response()->json($tasks, 200);
     }
@@ -43,7 +43,8 @@ class TaskController extends Controller
         $task_data = $request->task;
 
         // TASK
-        $new_task = Task::create($task_data);
+        $new_task = new Task($task_data);
+        auth()->user()->tasks()->save($new_task);
 
         // SUBTASK
         $new_subtasks = array_map(function ($subtask) {
@@ -55,7 +56,9 @@ class TaskController extends Controller
             $new_task->subtasks()->save($new_subtask);
         }
 
-        return response()->json($new_task->load('subtasks'), 201);
+        
+
+        return response()->json($new_task->load('subtasks', 'tasklist', 'project'), 201);
     }
 
     /**
@@ -66,7 +69,7 @@ class TaskController extends Controller
      */
     public function show($id)
     {
-        $task = Task::with("status", "subtasks", "tasklist", "tasklist.project")->where("task_id", $id)->first();
+        $task = auth()->user()->tasks()->with("status", "subtasks", "tasklist", "project")->where("task_id", $id)->first();
 
         return response()->json($task, 200);
     }
@@ -91,7 +94,7 @@ class TaskController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $existing_task = Task::findOrFail($id);
+        $existing_task = auth()->user()->tasks()->findOrFail($id);
 
         $patch_task = $request["task"];
 
@@ -124,7 +127,7 @@ class TaskController extends Controller
 
     public function deleteSubtask($subtask_id)
     {
-        $existing_subtask = Subtask::find($subtask_id);
+        $existing_subtask = auth()->user()->tasks()->find($subtask_id);
 
         if ($existing_subtask) {
             $existing_subtask->delete();

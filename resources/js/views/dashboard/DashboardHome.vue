@@ -4,15 +4,45 @@
       <div class="mb-12">
         <h1 v-if="user">{{ greetingMessage }}</h1>
       </div>
-      <div v-if="TasksStore.allCurrentTasks.length">
-        <h2 class="mb-4">Active tasks</h2>
-        <div class="flex flex-wrap -mx-2">
+      <div
+        v-if="userProjects"
+        class="bg-hydra-navy-850 px-8 py-8 rounded-lg border border-hydra-cinder-500 mb-12"
+      >
+        <h2 class="mb-8">Your Projects</h2>
+        <div class="grid grid-cols-3 gap-x-4 gap-y-4">
+          <div
+            v-for="project in userProjects"
+            :key="project.project_id"
+            class="w-full"
+          >
+            <ProjectCard
+              :project="project"
+              class="h-full p-4 mb-2 rounded-md bg-hydra-cinder-700 hover:bg-hydra-cinder-600"
+            />
+          </div>
+        </div>
+      </div>
+      <!-- Extract this out to TaskWidget -->
+      <div
+        v-if="TasksStore.allCurrentTasks"
+        class="bg-hydra-navy-850 px-8 py-8 rounded-lg border border-hydra-cinder-500"
+      >
+        <h2 class="mb-8">Active tasks</h2>
+        <div class="grid grid-cols-3 gap-x-4 gap-y-4">
           <div
             v-for="task in TasksStore.allCurrentTasks"
             :key="task.task_id"
-            class="w-full md:w-1/2 lg:w-1/3 px-2 mb-4"
+            class="w-full"
           >
-            <TaskCard :task="task" />
+            <TaskCard
+              :task="task"
+              :class="
+                task.status_id === 2
+                  ? ' bg-hydra-navy-700 hover:bg-hydra-navy-700'
+                  : 'bg-hydra-cinder-700 hover:bg-hydra-cinder-600'
+              "
+              class="h-full p-4 mb-2 rounded-md"
+            />
           </div>
         </div>
       </div>
@@ -21,19 +51,22 @@
 </template>
 
 <script>
-import { useAuthStore, useTasksStore } from "@/stores";
+import { useAuthStore, useProjectsStore, useTasksStore } from "@/stores";
 
+import ProjectCard from "@/components/projects/ProjectCard.vue";
 import TaskCard from "@/components/tasks/TaskCard.vue";
 
 export default {
   name: "DashboardHome",
   components: {
+    ProjectCard,
     TaskCard,
   },
   setup() {
     const AuthStore = useAuthStore();
+    const ProjectsStore = useProjectsStore();
     const TasksStore = useTasksStore();
-    return { AuthStore, TasksStore };
+    return { AuthStore, ProjectsStore, TasksStore };
   },
   data() {
     return {
@@ -66,17 +99,17 @@ export default {
       if (this.isNight) return `Pulling a late night, eh ${this.user.name}?`;
       return "Hello";
     },
+    // Technically this is widget related
+    userProjects() {
+      return this.ProjectsStore.allProjects;
+    },
   },
   methods: {
     async prepareDashboardTasks() {
-      const {
-        allTasks,
-        fetchAllTasks,
-        filterPriorityTasks,
-        setAllCurrentTasks,
-      } = this.TasksStore;
+      const { fetchAllTasks, filterPriorityTasks, setAllCurrentTasks } =
+        this.TasksStore;
 
-      const tasksToFilter = allTasks.length ? allTasks : await fetchAllTasks();
+      const tasksToFilter = await fetchAllTasks();
 
       const filteredTasks = filterPriorityTasks(tasksToFilter);
       setAllCurrentTasks(filteredTasks);

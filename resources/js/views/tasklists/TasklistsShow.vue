@@ -8,7 +8,7 @@
       <h5 class="font-bold text-lg mb-4">
         <router-link
           :to="{
-            name: 'projects.show',
+            name: 'projects.tasks.index',
             params: { id: currentProject.project_id },
           }"
           >{{ currentProject.name }}</router-link

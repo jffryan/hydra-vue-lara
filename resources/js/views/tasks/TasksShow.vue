@@ -4,34 +4,29 @@
       <div class="skeleton-loader bg-hydra-cinder-400"></div>
     </div>
     <!-- End skeleton loader -->
-    <div v-else-if="currentTask">
-      <div class="flex items-start mb-4">
-        <h5 class="font-bold text-lg mr-8">
+    <div
+      v-else-if="currentTask"
+      class="bg-hydra-navy-850 px-8 py-8 rounded-lg border border-hydra-cinder-500 mb-12"
+    >
+      <div class="flex items-start mb-2">
+        <h5 class="font-bold text-lg">
           <router-link
             :to="{
-              name: 'projects.show',
+              name: 'projects.tasks.index',
               params: { id: currentProject.project_id },
             }"
             >{{ currentProject.name }}</router-link
           >
-        </h5>
-        <span class="mr-8">&nbsp;|&nbsp;</span>
-        <h5>
-          <router-link
-            :to="{
-              name: 'tasklists.show',
-              params: { id: currentTasklist.tasklist_id },
-            }"
-          >
-            {{ currentTasklist.name }}
-          </router-link>
         </h5>
       </div>
 
       <div class="flex gap-x-10">
         <div class="w-2/3">
           <div class="mb-8">
-            <h1>{{ currentTask.name }}</h1>
+            <h1 class="mb-4">{{ currentTask.name }}</h1>
+            <p v-if="currentTask.description" class="mb-8">
+              {{ currentTask.description }}
+            </p>
             <div class="flex justify-start items-start mb-4">
               <div class="inline-block btn bg-hydra-cinder-500 mr-8">
                 {{ currentTask.status.name }}
@@ -43,10 +38,6 @@
                 Priority
               </div>
             </div>
-
-            <p v-if="currentTask.description">
-              {{ currentTask.description }}
-            </p>
           </div>
           <div>
             <h2>Subtasks</h2>
@@ -114,9 +105,6 @@ export default {
     currentProject() {
       return this.ProjectsStore.currentProject;
     },
-    currentTasklist() {
-      return this.TasklistsStore.currentTasklist;
-    },
     currentTask() {
       return this.TasksStore.currentTask;
     },
@@ -126,12 +114,8 @@ export default {
       this.$route.params.id
     );
 
-    if (!this.TasklistsStore.currentTasklist) {
-      this.TasklistsStore.setCurrentTasklist(currentTask.tasklist);
-    }
-
     if (!this.ProjectsStore.currentProject) {
-      this.ProjectsStore.setCurrentProject(currentTask.tasklist.project);
+      this.ProjectsStore.setCurrentProject(currentTask.project);
     }
 
     this.isLoading = false;

@@ -9,22 +9,11 @@
         <h5 class="font-bold text-lg mr-8">
           <router-link
             :to="{
-              name: 'projects.show',
+              name: 'projects.tasks.index',
               params: { id: currentProject.project_id },
             }"
             >{{ currentProject.name }}</router-link
           >
-        </h5>
-        <span class="mr-8">&nbsp;|&nbsp;</span>
-        <h5>
-          <router-link
-            :to="{
-              name: 'tasklists.show',
-              params: { id: currentTasklist.tasklist_id },
-            }"
-          >
-            {{ currentTasklist.name }}
-          </router-link>
         </h5>
       </div>
       <div class="flex gap-x-10">
@@ -84,9 +73,6 @@ export default {
     currentProject() {
       return this.ProjectsStore.currentProject;
     },
-    currentTasklist() {
-      return this.TasklistsStore.currentTasklist;
-    },
     currentTask() {
       return this.TasksStore.currentTask;
     },
@@ -104,12 +90,8 @@ export default {
       this.$route.params.id
     );
 
-    if (!this.TasklistsStore.currentTasklist) {
-      this.TasklistsStore.setCurrentTasklist(currentTask.tasklist);
-    }
-
     if (!this.ProjectsStore.currentProject) {
-      this.ProjectsStore.setCurrentProject(currentTask.tasklist.project);
+      this.ProjectsStore.setCurrentProject(currentTask.project);
     }
 
     this.isLoading = false;

@@ -12,7 +12,7 @@ class Task extends Model
     use HasFactory;
 
     protected $primaryKey = "task_id";
-    protected $fillable = ["name", "status_id", "is_priority", "description", "tasklist_id"];
+    protected $fillable = ["name", "status_id", "is_priority", "description", "tasklist_id", "project_id"];
 
     public function status(): BelongsTo
     {
@@ -22,6 +22,11 @@ class Task extends Model
     public function tasklist(): BelongsTo
     {
         return $this->belongsTo(Tasklist::class, "tasklist_id");
+    }
+
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class, 'project_id');
     }
 
     public function subtasks(): HasMany
@@ -34,7 +39,8 @@ class Task extends Model
         return $this->belongsToMany(Task::class, 'task_task', 'task_id', 'related_task_id');
     }
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 }

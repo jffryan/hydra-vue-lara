@@ -140,17 +140,8 @@ export default {
     };
   },
   computed: {
-    currentProjectName() {
-      return this.TasklistsStore.currentTasklist.project.name;
-    },
-    currentProjectId() {
-      return this.TasklistsStore.currentTasklist.project.project_id;
-    },
-    currentTasklistName() {
-      return this.TasklistsStore.currentTasklist.name;
-    },
-    currentTasklistId() {
-      return this.TasklistsStore.currentTasklist.tasklist_id;
+    currentTask() {
+      return this.TasksStore.currentTask;
     },
     isTaskValid() {
       return every(this.isValid);
@@ -165,7 +156,7 @@ export default {
         is_priority: false,
         description: "",
         subtasks: [],
-        task_list_id: this.TasklistsStore.currentTasklist.tasklist_id,
+        project_id: this.TasksStore.currentTask.project_id,
       };
     },
     addSubtask() {
@@ -209,7 +200,6 @@ export default {
     async submitUpdateTask() {
       // Submit via the API
       const res = await updateTask(this.taskForm);
-      // this.TasklistsStore.currentTasklist.tasks.push(res.data);
       // Reset UI
       this.$router.push({
         name: "tasks.show",

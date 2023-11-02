@@ -23,7 +23,11 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = auth()->user()->projects()->orderBy("name", "ASC")->get();
+        $projects = auth()
+            ->user()
+            ->projects()
+            ->orderBy("name", "ASC")
+            ->get();
 
         return response()->json($projects, 200);
     }
@@ -64,7 +68,8 @@ class ProjectController extends Controller
             'tasklists' => function ($query) {
                 $query->orderBy('name', 'ASC');
             },
-            'tasklists.tasks'
+            'tasklists.tasks',
+            'tasks',
         ])
             ->where("project_id", $id)
             ->first();
@@ -103,7 +108,7 @@ class ProjectController extends Controller
         $existing_project->fill($patch_project);
 
         $existing_project->save();
-        return response()->json($existing_project->load("tasklists", "tasklists.tasks"), 200);
+        return response()->json($existing_project->load("tasklists", "tasklists.tasks", "tasks"), 200);
     }
 
     /**

@@ -8,6 +8,7 @@ import {
 const useProjectsStore = defineStore("ProjectsStore", {
   state: () => ({
     allProjects: [],
+    allCurrentProjects: null,
     currentProject: null,
     viewFormat: "list",
   }),
@@ -32,6 +33,9 @@ const useProjectsStore = defineStore("ProjectsStore", {
     },
     setAllProjects(projects) {
       this.allProjects = projects;
+    },
+    setAllCurrentProjects(projects) {
+      this.allCurrentProjects = projects;
     },
     setCurrentProject(project) {
       this.currentProject = project;

@@ -2,8 +2,7 @@
   <form @submit.prevent="submitTaskForm" class="mb-7 py-6 px-4 rounded-xl">
     <h2>Create Task</h2>
     <div>
-      <p>Project: {{ currentProjectName }}</p>
-      <p>Tasklist: {{ currentTasklistName }}</p>
+      <p>Project: {{ currentProject.name }}</p>
     </div>
     <div class="mb-6">
       <label for="title" class="block mb-2 font-bold text-zinc-300 mr-6"
@@ -111,7 +110,7 @@
 import { every } from "lodash";
 
 import { createTask, deleteSubtask } from "@/api/TaskController";
-import { useTasklistsStore } from "@/stores";
+import { useProjectsStore, useTasklistsStore, useTasksStore } from "@/stores";
 import validators from "@/utils/validators";
 
 import DeleteIcon from "@/components/svgs/DeleteIcon.vue";
@@ -119,8 +118,10 @@ import DeleteIcon from "@/components/svgs/DeleteIcon.vue";
 export default {
   name: "BlankTask",
   setup() {
+    const ProjectsStore = useProjectsStore();
     const TasklistsStore = useTasklistsStore();
-    return { TasklistsStore };
+    const TasksStore = useTasksStore();
+    return { ProjectsStore, TasklistsStore, TasksStore };
   },
   components: {
     DeleteIcon,
@@ -135,17 +136,11 @@ export default {
     };
   },
   computed: {
-    currentProjectName() {
-      return this.TasklistsStore.currentTasklist.project.name;
+    currentProject() {
+      return this.ProjectsStore.currentProject;
     },
-    currentProjectId() {
-      return this.TasklistsStore.currentTasklist.project.project_id;
-    },
-    currentTasklistName() {
-      return this.TasklistsStore.currentTasklist.name;
-    },
-    currentTasklistId() {
-      return this.TasklistsStore.currentTasklist.tasklist_id;
+    currentTasklist() {
+      return this.TasklistsStore.currentTasklist;
     },
     isTaskValid() {
       return every(this.isValid);
@@ -160,7 +155,6 @@ export default {
         is_priority: false,
         description: "",
         subtasks: [],
-        task_list_id: this.TasklistsStore.currentTasklist.tasklist_id,
       };
     },
     addSubtask() {
@@ -202,13 +196,24 @@ export default {
       await this.createNewTask();
     },
     async createNewTask() {
+      let tasklist_id;
+      if (this.currentTasklist) {
+        tasklist_id = this.currentTasklist.tasklist_id;
+      } else {
+        tasklist_id = null;
+      }
       const taskForm = {
         ...this.taskForm,
-        tasklist_id: this.currentTasklistId,
+        tasklist_id,
+        project_id: this.currentProject.project_id,
       };
       // Submit via the API
       const res = await createTask(taskForm);
-      this.TasklistsStore.currentTasklist.tasks.push(res.data);
+      if (this.currentTasklist) {
+        this.TasklistsStore.currentTasklist.tasks.push(res.data);
+      }
+      this.TasksStore.allTasks.push(res.data);
+      this.ProjectsStore.currentProject.tasks.push(res.data);
       // Reset UI
       this.resetTaskForm();
     },
